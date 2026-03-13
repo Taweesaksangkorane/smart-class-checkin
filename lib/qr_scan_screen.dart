@@ -10,6 +10,7 @@ class QrScanScreen extends StatefulWidget {
 
 class _QrScanScreenState extends State<QrScanScreen> {
   bool _isHandled = false;
+  int _scannerInstance = 0;
 
   void _onDetect(BarcodeCapture capture) {
     if (_isHandled || !mounted) {
@@ -60,6 +61,13 @@ class _QrScanScreenState extends State<QrScanScreen> {
     Navigator.pop(context, value);
   }
 
+  void _retryCamera() {
+    setState(() {
+      _isHandled = false;
+      _scannerInstance++;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,6 +77,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
       body: Stack(
         children: [
           MobileScanner(
+            key: ValueKey(_scannerInstance),
             onDetect: _onDetect,
           ),
           Align(
@@ -81,7 +90,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
               child: const Text(
-                'Point camera at a QR code. On emulator, use manual entry.',
+                'Allow camera permission and point at a QR code. If camera fails on web/emulator, use Retry or manual entry.',
                 style: TextStyle(color: Colors.white),
               ),
             ),
@@ -90,19 +99,41 @@ class _QrScanScreenState extends State<QrScanScreen> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: Row(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  Expanded(
-                    child: FilledButton(
-                      onPressed: _openManualEntryDialog,
-                      child: const Text('Enter QR Manually'),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton.icon(
+                      onPressed: _retryCamera,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('Retry Camera'),
                     ),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: FilledButton.tonal(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('Cancel'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: FilledButton(
+                          onPressed: _openManualEntryDialog,
+                          child: const Text('Enter QR Manually'),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: FilledButton.tonal(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Cancel'),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Tip: On web, click the lock/camera icon near the URL and allow camera access.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.9),
+                      fontSize: 12,
                     ),
                   ),
                 ],
