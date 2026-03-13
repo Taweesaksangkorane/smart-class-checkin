@@ -309,7 +309,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      _buildLabel('Mood Before Class'),
+                      _buildLabel('Mood Before Class (1-5)'),
                       if (_selectedMood != null)
                         Text(
                           '$_selectedMood/5',
@@ -354,6 +354,14 @@ class _CheckInScreenState extends State<CheckInScreen> {
                         ),
                       );
                     }),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    '1=Very negative, 2=Negative, 3=Neutral, 4=Positive, 5=Very positive',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.grey.shade500,
+                    ),
                   ),
                   const SizedBox(height: 32),
                   _buildScanCard(),
