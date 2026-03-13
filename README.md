@@ -144,7 +144,7 @@ firebase deploy
 
 ## Firebase Deployment URL
 
-- Hosting URL: `TBD (add your Firebase Hosting URL after deploy)`
+- Hosting URL: `https://smart-class-checkin-eec51.web.app`
 
 ## Deliverables Mapping
 
