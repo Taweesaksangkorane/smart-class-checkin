@@ -25,6 +25,41 @@ class _QrScanScreenState extends State<QrScanScreen> {
     Navigator.pop(context, value);
   }
 
+  Future<void> _openManualEntryDialog() async {
+    final controller = TextEditingController();
+    final value = await showDialog<String>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Enter QR Value'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            decoration: const InputDecoration(
+              hintText: 'e.g. CLS-1305216-WEEK05',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, controller.text.trim()),
+              child: const Text('Use Value'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (!mounted || value == null || value.isEmpty) {
+      return;
+    }
+
+    Navigator.pop(context, value);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,12 +72,40 @@ class _QrScanScreenState extends State<QrScanScreen> {
             onDetect: _onDetect,
           ),
           Align(
+            alignment: Alignment.topCenter,
+            child: Container(
+              margin: const EdgeInsets.all(16),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: Colors.black.withValues(alpha: 0.6),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Text(
+                'Point camera at a QR code. On emulator, use manual entry.',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ),
+          Align(
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: const EdgeInsets.all(24),
-              child: FilledButton.tonal(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('Cancel'),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: FilledButton(
+                      onPressed: _openManualEntryDialog,
+                      child: const Text('Enter QR Manually'),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: FilledButton.tonal(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Cancel'),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
