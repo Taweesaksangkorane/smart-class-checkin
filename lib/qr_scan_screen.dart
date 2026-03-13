@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
@@ -10,7 +11,21 @@ class QrScanScreen extends StatefulWidget {
 
 class _QrScanScreenState extends State<QrScanScreen> {
   bool _isHandled = false;
-  int _scannerInstance = 0;
+  late final MobileScannerController _scannerController;
+
+  @override
+  void initState() {
+    super.initState();
+    _scannerController = MobileScannerController(
+      facing: kIsWeb ? CameraFacing.front : CameraFacing.back,
+    );
+  }
+
+  @override
+  void dispose() {
+    _scannerController.dispose();
+    super.dispose();
+  }
 
   void _onDetect(BarcodeCapture capture) {
     if (_isHandled || !mounted) {
@@ -61,10 +76,16 @@ class _QrScanScreenState extends State<QrScanScreen> {
     Navigator.pop(context, value);
   }
 
-  void _retryCamera() {
+  Future<void> _retryCamera() async {
+    await _scannerController.stop();
+    await _scannerController.start();
+
+    if (!mounted) {
+      return;
+    }
+
     setState(() {
       _isHandled = false;
-      _scannerInstance++;
     });
   }
 
@@ -77,7 +98,7 @@ class _QrScanScreenState extends State<QrScanScreen> {
       body: Stack(
         children: [
           MobileScanner(
-            key: ValueKey(_scannerInstance),
+            controller: _scannerController,
             onDetect: _onDetect,
           ),
           Align(

@@ -9,7 +9,7 @@ class CheckInScreen extends StatefulWidget {
 
   @override
   State<CheckInScreen> createState() => _CheckInScreenState();
-}
+}   
 
 class _CheckInScreenState extends State<CheckInScreen> {
   final _formKey = GlobalKey<FormState>();
